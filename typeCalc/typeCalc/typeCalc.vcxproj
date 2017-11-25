@@ -112,8 +112,10 @@
   <ItemGroup>
     <ClCompile Include="EvaluateFormula.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Value.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CharHelpers.h" />
     <ClInclude Include="typeCalc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

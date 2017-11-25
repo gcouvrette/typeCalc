@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "../typeCalc/typeCalc.h"
+#include "Defines.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace typeCalc;
@@ -14,16 +15,15 @@ namespace UnitTests
 		// Calling EvaluateFormula with an empty string should return an EmptyFormula error.
 		TEST_METHOD(EmptyFormulaReturnsNull)
 		{
-			try {
-				typeCalc::EvaluateFormula("");
-				Assert::Fail(L"EvaluateFormula did not fail.", LINE_INFO()); // Should never be reached if EvaluateFormula "Throws".
-			}
-			catch (typeCalc::EvalError e) {
-				Assert::IsTrue(e == FORMULA_EMPTY, L"Wrong error type: Expected FORMULA_ERROR.", LINE_INFO());
-			}
-			catch (...) {
-				Assert::Fail(L"Function did not throw the proper exception type.", LINE_INFO());
-			}
+			TEST_EXCEPTION(typeCalc::EvaluateFormula(""), typeCalc::EvalError, FORMULA_EMPTY);
+		}
+
+		// Calling EvaluateFormula with a simple value should return itself in a Value
+		TEST_METHOD(SingleValueReturnsItself)
+		{
+			std::string textValue = "5";
+			typeCalc::Value expect(textValue);
+			Assert::IsTrue(EvaluateFormula(textValue) == expect, L"EvaluateFormula did not return expected value.", LINE_INFO());
 		}
 
 	};

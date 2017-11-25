@@ -21,9 +21,15 @@
     <ClCompile Include="EvaluateFormula.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Value.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="typeCalc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CharHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

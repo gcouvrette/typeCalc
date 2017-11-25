@@ -6,5 +6,5 @@ Value typeCalc::EvaluateFormula(std::string formula)
 	if (formula.empty())
 		throw FORMULA_EMPTY;
 
-	return Value();
+	return Value("0");
 }
