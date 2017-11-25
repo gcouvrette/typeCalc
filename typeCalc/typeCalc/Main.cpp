@@ -1,8 +1,8 @@
 #include "typeCalc.h"
 
+using namespace typeCalc;
 int main(int, char*[])
 {
-	typeCalc::Value("12.25");
-	typeCalc::EvaluateFormula("");
+	Value("-5");
 	return 0;
 }

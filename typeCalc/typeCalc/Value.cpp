@@ -12,6 +12,13 @@ Value::Value(std::string text) {
 	std::string qtyStr = "";
 	int digit_mode = false; // A dot was found and we are evaluating decimals
 	auto c = text.begin();
+
+	// First of all, accept the first char if is is a '-'
+	if (IS_NEG(*c)) {
+		qtyStr += *c;
+		c++;
+	}
+
 	for (; c != text.end(); c++) {
 		// Either we get a dot, or a number. Anything else is considered not a proper value.
 		if (IS_DOT(*c)) {
@@ -29,7 +36,8 @@ Value::Value(std::string text) {
 }
 
 bool Value::operator==(const Value &val2) const {
-	return false;
+	return qty() == val2.qty() &&
+		   type() == val2.type();
 }
 
 double Value::qty() const

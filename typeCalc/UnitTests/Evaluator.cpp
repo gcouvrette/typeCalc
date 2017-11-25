@@ -15,7 +15,8 @@ namespace UnitTests
 		// Calling EvaluateFormula with an empty string should return an EmptyFormula error.
 		TEST_METHOD(EmptyFormulaReturnsNull)
 		{
-			TEST_EXCEPTION(typeCalc::EvaluateFormula(""), typeCalc::EvalError, FORMULA_EMPTY);
+			Evaluator e;
+			TEST_EXCEPTION(e.evaluate(""), typeCalc::EvalError, FORMULA_EMPTY);
 		}
 
 		// Calling EvaluateFormula with a simple value should return itself in a Value
@@ -23,7 +24,8 @@ namespace UnitTests
 		{
 			std::string textValue = "5";
 			typeCalc::Value expect(textValue);
-			Assert::IsTrue(EvaluateFormula(textValue) == expect, L"EvaluateFormula did not return expected value.", LINE_INFO());
+			Evaluator e;
+			Assert::IsTrue(e.evaluate(textValue) == expect, L"EvaluateFormula did not return expected value.", LINE_INFO());
 		}
 
 	};
