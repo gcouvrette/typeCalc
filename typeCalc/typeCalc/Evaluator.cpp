@@ -28,28 +28,34 @@ Value Evaluator::evaluate(std::string formula) {
 				break;
 				// if the operator is a closing parentheses, we pop back each operator until the matching parenthese is found:
 			case CLOSING_P:
-				while (pop(values, operators)); // Pop until we get either an opened parentheses or we empty the stack.
+				while (pop(values, operators, true)); // Pop until we get either an opened parentheses or we empty the stack.
 				break;
 
 			case MULT:
 			case DIV:
 			{
-				// check what the next operator is:
-				Operator topOp = operators.top();
-				if (topOp == DIV || topOp == MULT) // If there is already a mult or div, pop it first:
-					pop(values, operators);
+				// If we have already a symbol on the stack, check what the next operator is:
+				if (!operators.empty()) {
+					Operator topOp = operators.top();
+					if (topOp == DIV || topOp == MULT) // If there is already a mult or div, pop it first:
+						pop(values, operators);
+
+				}
+				// Then, push it to the stack.
+				operators.push(op);
 			}
 			break;
 			case PLUS:
 			case MINUS:
 			{
-				// No matter what, we need to pop the last operator if there is one:
-				if (!operators.empty())
+				// No matter what, we need to pop the last operator if there is one, except if it is a parenthesis:
+				if (!operators.empty() && operators.top() != OPEN_P)
 					pop(values, operators);
+				// Then, push it to the stack.
+				operators.push(op);
 			}
 			break;
 			}
-			operators.push(op);
 		}
 	}
 
@@ -60,14 +66,16 @@ Value Evaluator::evaluate(std::string formula) {
 }
 
 // This function splits and cleans the input formula in potential values and operators.
-std::vector<Evaluator::Token> Evaluator::tokenize(std::string formula) const {
+std::vector<Evaluator::Token> Evaluator::tokenize(std::string& formula) const {
 	std::vector<Token> tokens;
 	std::string currentString;
 	for (const char& c : formula) {
+		// Ignore whitespaces
+		if (IS_WHITESPACE(c))
+			continue;
 		if (IS_OP(c)) {
-			if (currentString.empty()) // Unexpected symbol; no left operand...
-				throw UNEXPECTED_OP;
-			tokens.emplace_back(Token(currentString)); // Tokenize the last string
+			if (!currentString.empty())
+				tokens.emplace_back(Token(currentString)); // Tokenize the last string
 			currentString = "";
 			currentString.push_back(c);
 			tokens.emplace_back(Token(currentString)); // Push this operator right after

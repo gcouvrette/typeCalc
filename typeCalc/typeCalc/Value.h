@@ -33,7 +33,7 @@ namespace typeCalc {
 		// Returns the type of this value
 		Type type() const;
 
-		Value eval(Operator op, Value val2) const;
+		Value eval(Operator op, const Value& val2) const;
 	private:
 		double _qty;
 	};

@@ -37,7 +37,7 @@ namespace typeCalc {
 		};
 
 		// Transform a string in a list of tokens
-		std::vector<Token> tokenize(std::string formula) const;
+		std::vector<Token> tokenize(std::string& formula) const;
 		// Pop the topmost operator and applies it to the last 2 values stacked in the value stack.
 		// unwrapping_par: Set to TRUE when unwrapping parentheses, it will THROW if the operator list is empty. 
 		// It returns false when we pop a delimiter (Open parenthese or once we empty the stack)

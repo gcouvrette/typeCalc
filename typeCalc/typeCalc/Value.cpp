@@ -60,7 +60,7 @@ Value::Type Value::type() const
 	return NUMBER;
 }
 
-Value typeCalc::Value::eval(Operator op, Value val2) const
+Value typeCalc::Value::eval(Operator op, const Value& val2) const
 {
 	// For now, we implement as if we are NUMBER by default, TODO: Refactor Value in subclasses,
 	// and overload eval per type, ex: DurationValue::eval(op, val), NumverValue::eval(op, val) 
