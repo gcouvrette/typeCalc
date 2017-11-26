@@ -8,25 +8,31 @@ using namespace typeCalc;
 
 namespace UnitTests
 {
-	// Tests for function "typeCalc::EvaluateFormula()"
-	TEST_CLASS(EvaluateFormulaTests)
+	// Tests for class Evaluator
+	TEST_CLASS(EvaluatorTests)
 	{
 	public:
-		// Calling EvaluateFormula with an empty string should return an EmptyFormula error.
+		// Calling evaluate with an empty string should return an EmptyFormula error.
 		TEST_METHOD(EmptyFormulaReturnsNull)
 		{
 			Evaluator e;
 			TEST_EXCEPTION(e.evaluate(""), typeCalc::EvalError, FORMULA_EMPTY);
 		}
 
-		// Calling EvaluateFormula with a simple value should return itself in a Value
+		// Calling evaluate with a simple value should return itself in a Value
 		TEST_METHOD(SingleValueReturnsItself)
 		{
 			std::string textValue = "5";
-			typeCalc::Value expect(textValue);
+			Value expect(textValue);
 			Evaluator e;
-			Assert::IsTrue(e.evaluate(textValue) == expect, L"EvaluateFormula did not return expected value.", LINE_INFO());
+			Assert::IsTrue(e.evaluate(textValue) == expect, L"evaluate did not return expected value.", LINE_INFO());
 		}
 
+		// Calling evaluate with a simple value should return itself in a Value
+		TEST_METHOD(SimpleEvaluation)
+		{
+			Evaluator e;
+			Assert::IsTrue(e.evaluate("2+2") == Value("4"), L"evaluate did not return expected value.", LINE_INFO());
+		}
 	};
 }

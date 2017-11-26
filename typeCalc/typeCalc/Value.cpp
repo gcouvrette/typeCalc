@@ -29,15 +29,25 @@ Value::Value(std::string text) {
 		}
 		else if (!IS_DIGIT(*c))
 			break;
-		
-	qtyStr += *c; // Append the char to the qty string.
+
+		qtyStr += *c; // Append the char to the qty string.
 	}
 	_qty = atof(qtyStr.c_str());
 }
 
+typeCalc::Value::Value(double qty)
+{
+	_qty = qty;
+}
+
+typeCalc::Value::Value(const Value & value)
+{
+	_qty = value._qty;
+}
+
 bool Value::operator==(const Value &val2) const {
 	return qty() == val2.qty() &&
-		   type() == val2.type();
+		type() == val2.type();
 }
 
 double Value::qty() const
@@ -48,4 +58,22 @@ double Value::qty() const
 Value::Type Value::type() const
 {
 	return NUMBER;
+}
+
+Value typeCalc::Value::eval(Operator op, Value val2) const
+{
+	// For now, we implement as if we are NUMBER by default, TODO: Refactor Value in subclasses,
+	// and overload eval per type, ex: DurationValue::eval(op, val), NumverValue::eval(op, val) 
+	switch (op) {
+	case PLUS:
+		return Value(qty() + val2.qty());
+	case MINUS:
+		return Value(qty() - val2.qty());
+	case MULT:
+		return Value(qty() * val2.qty());
+	case DIV:
+		return Value(qty() / val2.qty());
+	default:
+		throw OPER_NOT_IMPL;
+	}
 }

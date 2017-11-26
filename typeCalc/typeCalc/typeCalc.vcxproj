@@ -117,6 +117,7 @@
   <ItemGroup>
     <ClInclude Include="CharHelpers.h" />
     <ClInclude Include="Evaluator.h" />
+    <ClInclude Include="Operator.h" />
     <ClInclude Include="Value.h" />
     <ClInclude Include="typeCalc.h" />
   </ItemGroup>
