@@ -13,7 +13,9 @@ namespace typeCalc {
 		UNEXPECTED_OP,
 		UNEXPECTED_FORMULA_END,
 		UNEXPECTED_END_PAR,
-		MISSING_VALUE
+		MISSING_VALUE,
+		MALFORMED_FORMULA,
+		UNKNOWN_VALUE
 	};
 
 	// This class is used to evaluate formulas.

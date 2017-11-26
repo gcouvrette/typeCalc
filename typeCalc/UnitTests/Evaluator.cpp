@@ -62,5 +62,23 @@ namespace UnitTests
 			Evaluator e;
 			Assert::IsTrue(e.evaluate("(5 + (2 * (3 + 3)) + 6) / 2") == Value("11.5"), L"evaluate did not return expected value.", LINE_INFO());
 		}
+
+		// Misformed formula
+		TEST_METHOD(MisformedFormulaTest)
+		{
+			Evaluator e;
+			TEST_EXCEPTION(e.evaluate("("), typeCalc::EvalError, typeCalc::EvalError::MALFORMED_FORMULA);
+			TEST_EXCEPTION(e.evaluate("+"), typeCalc::EvalError, typeCalc::EvalError::MISSING_VALUE);
+			TEST_EXCEPTION(e.evaluate("1++1"), typeCalc::EvalError, typeCalc::EvalError::MISSING_VALUE);
+			TEST_EXCEPTION(e.evaluate(")"), typeCalc::EvalError, typeCalc::EvalError::UNEXPECTED_END_PAR);
+			TEST_EXCEPTION(e.evaluate("((1+1)"), typeCalc::EvalError, typeCalc::EvalError::MALFORMED_FORMULA);
+		}
+
+		// Simple typed calculation(duration + duration)
+		TEST_METHOD(DurationTypeTest)
+		{
+			Evaluator e;
+			Assert::IsTrue(e.evaluate("1h30 + 1h30") == Value("3h00"), L"evaluate did not return expected value.", LINE_INFO());
+		}
 	};
 }

@@ -62,6 +62,8 @@ Value Evaluator::evaluate(std::string formula) {
 	// Once the tokens are all parsed, empty the remaining operators:
 	while (pop(values, operators));
 
+	if (values.size() != 1)
+		throw MALFORMED_FORMULA;
 	return Value(values.top());
 }
 
@@ -107,7 +109,10 @@ bool typeCalc::Evaluator::pop(std::stack<Value>& values, std::stack<Operator>& o
 
 	// We popped an open parenthese. If unwrapping_par, Stop.
 	if (op == OPEN_P)
-		return (!unwrapping_par);
+		if (unwrapping_par)
+			return (false);
+		else
+			throw MALFORMED_FORMULA;
 	// Extract the last 2 values of the stack:
 	if (values.empty())
 		throw MISSING_VALUE;
