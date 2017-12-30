@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "../typeCalc/typeCalc.h"
+#include "../typeCalc/value.h"
+#include "../typeCalc/Evaluator.h"
 #include "Defines.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -23,44 +24,44 @@ namespace UnitTests
 		TEST_METHOD(SingleValueReturnsItselfTest)
 		{
 			std::string textValue = "5";
-			Value expect(textValue);
+			std::unique_ptr<Value> expect = Value::fromString(textValue);
 			Evaluator e;
-			Assert::IsTrue(e.evaluate(textValue) == expect, L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*e.evaluate(textValue) == (*expect), L"evaluate did not return expected value.", LINE_INFO());
 		}
 
 		// Simple addition to test if the basic evaluation logic is working
 		TEST_METHOD(SimpleEvaluationTest)
 		{
 			Evaluator e;
-			Assert::IsTrue(e.evaluate("2+2") == Value("4"), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*e.evaluate("2+2") == *Value::fromString("4"), L"evaluate did not return expected value.", LINE_INFO());
 		}
 
 		// A test for operator's priority
 		TEST_METHOD(OperatorPriorityTest)
 		{
 			Evaluator e;
-			Assert::IsTrue(e.evaluate("1+2*3") == Value("7"), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*e.evaluate("1+2*3") == *Value::fromString("7"), L"evaluate did not return expected value.", LINE_INFO());
 		}
 
 		// A basic test for parentheses
 		TEST_METHOD(ParenthesesTest)
 		{
 			Evaluator e;
-			Assert::IsTrue(e.evaluate("(1+2)*3") == Value("9"), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*e.evaluate("(1+2)*3") == *Value::fromString("9"), L"evaluate did not return expected value.", LINE_INFO());
 		}
 
 		// Nested parentheses
 		TEST_METHOD(NestedParenthesesTest)
 		{
 			Evaluator e;
-			Assert::IsTrue(e.evaluate("(5+(2*(3+3))+6)/2") == Value("11.5"), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*e.evaluate("(5+(2*(3+3))+6)/2") == *Value::fromString("11.5"), L"evaluate did not return expected value.", LINE_INFO());
 		}
 
 		// Managing whitespaces
 		TEST_METHOD(IgnoringWhitespacesTest)
 		{
 			Evaluator e;
-			Assert::IsTrue(e.evaluate("(5 + (2 * (3 + 3)) + 6) / 2") == Value("11.5"), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*e.evaluate("(5 + (2 * (3 + 3)) + 6) / 2") == *Value::fromString("11.5"), L"evaluate did not return expected value.", LINE_INFO());
 		}
 
 		// Misformed formula
@@ -78,7 +79,7 @@ namespace UnitTests
 		TEST_METHOD(DurationTypeTest)
 		{
 			Evaluator e;
-			Assert::IsTrue(e.evaluate("1h30 + 1h30") == Value("3h00"), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*e.evaluate("1h30 + 1h30") == *Value::fromString("3h00"), L"evaluate did not return expected value.", LINE_INFO());
 		}
 	};
 }

@@ -110,8 +110,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Duration.cpp" />
     <ClCompile Include="Evaluator.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Number.cpp" />
     <ClCompile Include="Value.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -119,7 +121,6 @@
     <ClInclude Include="Evaluator.h" />
     <ClInclude Include="Operator.h" />
     <ClInclude Include="Value.h" />
-    <ClInclude Include="typeCalc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

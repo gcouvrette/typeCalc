@@ -1,9 +1,12 @@
 #pragma once
 #include <string>
-#include "Evaluator.h"
 #include "Operator.h"
+#include <memory>
 
 namespace typeCalc {
+	class Number;
+	class Duration;
+
 	/* This class represents a Value, along with it's data type. */
 	class Value {
 	public:
@@ -18,22 +21,66 @@ namespace typeCalc {
 		enum Error {
 			EMPTY_TEXT,
 			MULTIPLE_DECIMAL_POINTS,
-			OPER_NOT_IMPL
+			OPER_NOT_IMPL,
+			INVALID_VALUE
 		};
-		// Parses the string to construct the Value. May throw "Value::Error" if parsing fails
-		Value(std::string text);
-		// Constructor directly from qty
-		Value(double qty);
-		// Copy constructor
-		Value(const Value& value);
 		// Compares two values to see if both their quantity and type matches
-		bool operator==(const Value & val) const;
-		// Returns the "raw" quantity of this value
-		double qty() const;
-		// Returns the type of this value
-		Type type() const;
+		virtual bool operator==(const Value& val) const = 0;
+		// Constructs a value from the string in parameter of the right type.
+		static std::unique_ptr<Value> fromString(const std::string& text);
+		// This function will be called to evaluate an operation with a specific value in second val (Second value may be null for unary operations)
+		// It will then dispatch to the corresponding call using a more precise value type. Only those needs to be implemented by each Value type.
+		std::unique_ptr<Value> eval(const Operator op, const Value* const val2) const;
+	protected:
+		// Unary operation
+		virtual std::unique_ptr<Value> eval(const Operator op) const = 0;
+		// Operation with a Duration
+		virtual std::unique_ptr<Value> eval(const Operator op, const Duration* const val2) const = 0;
+		// Operation with a Number
+		virtual std::unique_ptr<Value> eval(const Operator op, const Number* const val2) const = 0;
 
-		Value eval(Operator op, const Value& val2) const;
+	};
+
+	/* This class is a value that holds a number. */
+	class Number : public Value {
+	public:
+		/* Parses the string and initialize a Number value if possible.
+		May throw an Exception if a parsing error occurs. */
+		Number(const std::string& text);
+		// Initialize directly with the number in parameter.
+		Number(double qty);
+
+		/* From: typeCalc::Value */
+		virtual bool operator==(const Value& val) const;
+		double qty() const;
+	protected:
+		// Unary operation
+		virtual std::unique_ptr<Value> eval(const Operator op) const;
+		// Operation with a Duration
+		virtual std::unique_ptr<Value> eval(const Operator op, const Duration* const val2) const;
+		// Operation with a Number
+		virtual std::unique_ptr<Value> eval(const Operator op, const Number* const val2) const;
+	private:
+		double _qty;
+	};
+
+	/* This class is a value that holds durations. */
+	class Duration : public Value {
+	public:
+		/* Parses the string and initialize a Duration value if possible.
+		   May throw an Exception if a parsing error occurs. */
+		Duration(const std::string& text);
+
+		/* From: typeCalc::Value */
+		virtual bool operator==(const Value& val) const;
+		virtual double qty() const;
+	protected:
+		// Unary operation
+		virtual std::unique_ptr<Value> eval(const Operator op) const;
+		// Operation with a Duration
+		virtual std::unique_ptr<Value> eval(const Operator op, const Duration* const val2) const;
+		// Operation with a Number
+		virtual std::unique_ptr<Value> eval(const Operator op, const Number* const val2) const;
 	private:
 		double _qty;
 	};

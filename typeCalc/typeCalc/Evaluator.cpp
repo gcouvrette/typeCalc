@@ -1,23 +1,24 @@
-#include "typeCalc.h"
+#include "Evaluator.h"
+#include "Value.h"
 #include "CharHelpers.h"
 #include <stack>
 
 using namespace typeCalc;
-Value Evaluator::evaluate(std::string formula) {
+std::unique_ptr<Value> Evaluator::evaluate(const std::string& formula) const {
 	if (formula.empty())
 		throw FORMULA_EMPTY;
 
 	// Step 1: tokenize the string:
 	auto tokens = tokenize(formula);
 
-	std::stack<Value> values; // Holds values as they are being processed.
+	std::stack<std::unique_ptr<Value>> values; // Holds values as they are being processed.
 	std::stack<Operator> operators; // Hold operators in priority order.
 
 	// Evaluation logic:
-	for (const Token& token : tokens) {
+	for (Token& token : tokens) {
 		// If the token a value, add it to the value stack:
 		if (token.isVal())
-			values.push(token.asValue());
+			values.push(token.takeValue());
 		else {
 			Operator op = token.asOperator();
 			switch (op)
@@ -64,11 +65,11 @@ Value Evaluator::evaluate(std::string formula) {
 
 	if (values.size() != 1)
 		throw MALFORMED_FORMULA;
-	return Value(values.top());
+	return std::move(values.top());
 }
 
 // This function splits and cleans the input formula in potential values and operators.
-std::vector<Evaluator::Token> Evaluator::tokenize(std::string& formula) const {
+std::vector<Evaluator::Token> Evaluator::tokenize(const std::string& formula) const {
 	std::vector<Token> tokens;
 	std::string currentString;
 	for (const char& c : formula) {
@@ -95,37 +96,37 @@ std::vector<Evaluator::Token> Evaluator::tokenize(std::string& formula) const {
 	return tokens;
 }
 
-bool typeCalc::Evaluator::pop(std::stack<Value>& values, std::stack<Operator>& operators, bool unwrapping_par /* = false */)
+bool typeCalc::Evaluator::pop(std::stack<std::unique_ptr<Value>>& values, std::stack<Operator>& operators, bool unwrapping_par /* = false */) const
 {
-	if (operators.empty())
-		if (unwrapping_par) // We have nothing left to process and should throw (while unwrapping parentheses).
-			throw UNEXPECTED_END_PAR;
-		else
-			return false; // We emptied the stack. Stop.
-
-	// Get the top operator:
-	const Operator op = operators.top();
-	operators.pop();
-
-	// We popped an open parenthese. If unwrapping_par, Stop.
-	if (op == OPEN_P)
-		if (unwrapping_par)
-			return (false);
-		else
-			throw MALFORMED_FORMULA;
-	// Extract the last 2 values of the stack:
-	if (values.empty())
-		throw MISSING_VALUE;
-	Value val2 = values.top();
-	values.pop();
-	if (values.empty())
-		throw MISSING_VALUE;
-	Value val1 = values.top();
-	values.pop();
-	// Process them
-	Value result = val1.eval(op, val2);
-	// Push it back on the stack for the next pop:
-	values.push(result);
+ 	if (operators.empty())
+ 		if (unwrapping_par) // We have nothing left to process and should throw (while unwrapping parentheses).
+ 			throw UNEXPECTED_END_PAR;
+ 		else
+ 			return false; // We emptied the stack. Stop.
+ 
+ 	// Get the top operator:
+ 	const Operator op = operators.top();
+ 	operators.pop();
+ 
+ 	// We popped an open parenthese. If unwrapping_par, Stop.
+ 	if (op == OPEN_P)
+ 		if (unwrapping_par)
+ 			return (false);
+ 		else
+ 			throw MALFORMED_FORMULA;
+ 	// Extract the last 2 values of the stack:
+ 	if (values.empty())
+ 		throw MISSING_VALUE;
+	std::unique_ptr<Value> val2 = std::move(values.top());
+ 	values.pop();
+ 	if (values.empty())
+ 		throw MISSING_VALUE;
+	std::unique_ptr<Value> val1 = std::move(values.top());
+ 	values.pop();
+ 	// Process them
+	std::unique_ptr<Value> result = val1->eval(op, val2.get());
+ 	// Push it back on the stack for the next pop:
+ 	values.push(std::move(result));
 	return true;
 }
 
@@ -145,7 +146,7 @@ Evaluator::Token::Token(std::string str) : _isVal(false) {
 		_op = Operator::CLOSING_P;
 	else
 	{
-		_val = std::unique_ptr<Value>(new Value(str));
+		_val = Value::fromString(str);
 		_isVal = true;
 	}
 }
@@ -154,10 +155,10 @@ bool Evaluator::Token::isVal() const {
 	return _isVal;
 }
 
-Value Evaluator::Token::asValue() const {
+std::unique_ptr<Value> Evaluator::Token::takeValue() {
 	if (!isVal())
 		throw std::exception("Operator token read as a value!");
-	return Value(*_val); // Take a copy of the value in this 
+	return std::move(_val); // Take a copy of the value in this 
 }
 
 Operator Evaluator::Token::asOperator() const {
