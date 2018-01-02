@@ -24,7 +24,7 @@ Number::Number(const std::string& text) {
 				throw Value::Error::MULTIPLE_DECIMAL_POINTS;
 		}
 		else if (!IS_DIGIT(*c))
-			break;
+			throw Value::Error::INVALID_VALUE;
 
 		qtyStr += *c; // Append the char to the qty string.
 	}

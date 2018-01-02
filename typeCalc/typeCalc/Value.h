@@ -70,6 +70,7 @@ namespace typeCalc {
 		/* Parses the string and initialize a Duration value if possible.
 		   May throw an Exception if a parsing error occurs. */
 		Duration(const std::string& text);
+		Duration(int seconds);
 
 		/* From: typeCalc::Value */
 		virtual bool operator==(const Value& val) const;
