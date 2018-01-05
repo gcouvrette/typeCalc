@@ -81,5 +81,19 @@ namespace UnitTests
 			Evaluator e;
 			Assert::IsTrue(*e.evaluate("1h30 + 1h30") == *Value::fromString("3h00"), L"evaluate did not return expected value.", LINE_INFO());
 		}
+
+		// Simple typed calculation(duration * number)
+		TEST_METHOD(DurationTimesNumber)
+		{
+			Evaluator e;
+			Assert::IsTrue(*e.evaluate("1h30 * 2") == *Value::fromString("3h00"), L"evaluate did not return expected value.", LINE_INFO());
+		}
+
+		// Negative number
+		TEST_METHOD(NegativeNumber)
+		{
+			Evaluator e;
+			Assert::IsTrue(*e.evaluate("-5 + 6") == *Value::fromString("1"), L"evaluate did not return expected value.", LINE_INFO());
+		}
 	};
 }

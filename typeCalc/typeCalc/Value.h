@@ -24,12 +24,12 @@ namespace typeCalc {
 			OPER_NOT_IMPL,
 			INVALID_VALUE
 		};
-		// Compares two values to see if both their quantity and type matches
-		virtual bool operator==(const Value& val) const = 0;
 		// Constructs a value from the string in parameter of the right type.
 		static std::unique_ptr<Value> fromString(const std::string& text);
+		// Compares two values to see if both their quantity and type matches
+		virtual bool operator==(const Value& val) const = 0;
 		// This function will be called to evaluate an operation with a specific value in second val (Second value may be null for unary operations)
-		// It will then dispatch to the corresponding call using a more precise value type. Only those needs to be implemented by each Value type.
+		// It will then dispatch to the corresponding call using a more precise value type. Only the latter needs to be implemented by each Value type.
 		std::unique_ptr<Value> eval(const Operator op, const Value* const val2) const;
 	protected:
 		// Unary operation

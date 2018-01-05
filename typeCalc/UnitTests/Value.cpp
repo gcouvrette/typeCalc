@@ -8,8 +8,8 @@ using namespace typeCalc;
 
 namespace UnitTests
 {
-	// Tests for class "typeCalc::Value"
-	TEST_CLASS(ValueTests)
+	// Tests for "typeCalc::Value::fromString()" - The static function parsing and creating the corresponding Value object.
+	TEST_CLASS(FromStringTests)
 	{
 	public:
 		// Constructing a Value with an empty string should fail.
@@ -42,6 +42,18 @@ namespace UnitTests
 			Assert::IsTrue(test->qty() == 10241.1225, L"Incorrect quantity.");
 		}
 
+		TEST_METHOD(EqualityOperator)
+		{
+			std::unique_ptr<Value> v1 = Value::fromString("1234");
+			std::unique_ptr<Value> v2 = Value::fromString("1234");
+			std::unique_ptr<Value> v3 = Value::fromString("5");
+			Assert::IsTrue(*v1 == *v2, L"Equality operator did not detect actual equality.");
+			Assert::IsFalse(*v1 == *v3, L"Equality operator incorrectly detected an equality.");
+		}
+	};
+	// Extra tests for value (ex: == operator)
+	TEST_CLASS(MiscValueTests)
+	{
 		TEST_METHOD(EqualityOperator)
 		{
 			std::unique_ptr<Value> v1 = Value::fromString("1234");
