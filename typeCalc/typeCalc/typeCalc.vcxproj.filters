@@ -13,36 +13,45 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Values">
+      <UniqueIdentifier>{780c9074-a96b-4975-81d7-9a6bc3fef12a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Values">
+      <UniqueIdentifier>{e2a4b489-05ed-4495-87ef-d0ae59084215}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Value.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Evaluator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Duration.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Values</Filter>
     </ClCompile>
     <ClCompile Include="Number.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Values</Filter>
+    </ClCompile>
+    <ClCompile Include="Value.cpp">
+      <Filter>Source Files\Values</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Evaluator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Value.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Operator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CharHelpers.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Duration.h">
+      <Filter>Header Files\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Value.h">
+      <Filter>Header Files\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Number.h">
+      <Filter>Header Files\Values</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

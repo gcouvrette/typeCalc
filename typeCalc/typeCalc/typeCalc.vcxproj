@@ -117,8 +117,9 @@
     <ClCompile Include="Value.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CharHelpers.h" />
+    <ClInclude Include="Duration.h" />
     <ClInclude Include="Evaluator.h" />
+    <ClInclude Include="Number.h" />
     <ClInclude Include="Operator.h" />
     <ClInclude Include="Value.h" />
   </ItemGroup>

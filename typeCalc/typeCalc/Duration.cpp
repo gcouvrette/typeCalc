@@ -1,93 +1,66 @@
-#include "Value.h"
-#include "CharHelpers.h"
+#include "Duration.h"
+#include "Number.h"
+#include <exception>
 
 using namespace typeCalc;
 
-
-Duration::Duration(const std::string& text) {
-
-	std::string qtyStr;
-	int implied_mult = 0; // Used to store the multiplier to use for the last value if no last unit is entered (ex: 5h30 vs 5h30m)
-	_qty = 0;
-	for (auto c = text.begin(); c != text.end(); c++) {
-		// We start by accumulating the string for the number until we find a unit symbol:
-		if (IS_DIGIT(*c)) {
-			qtyStr += *c; // Append the char to the qty string.
-			continue;
-		}
-		// Parse the unit:
-		switch (*c) {
-		case 'h': // We have hours, accumulate the last number times 3600
-			if (qtyStr.length() == 0)
-				throw Error::INVALID_VALUE;
-			_qty += 3600 * atoi(qtyStr.c_str());
-			implied_mult = 60; // We just parsed an hour, the next value is implied minutes 
-			break;
-		case 'm':  // We have minutes, accumulate the last number times 60
-			if (qtyStr.length() == 0)
-				throw Error::INVALID_VALUE;
-			_qty += 60 * atoi(qtyStr.c_str());
-			implied_mult = 1; // We just parsed minutes, the next value is implied seconds 
-			break;
-		case 's': // We have seconds, accumulate the last number directly
-			if (qtyStr.length() == 0)
-				throw Error::INVALID_VALUE;
-			_qty += atoi(qtyStr.c_str());
-			break;
-		default:
-			throw Error::INVALID_VALUE;
-		}
-		qtyStr = "";
-
-	}
-	if (implied_mult == 0) // If the implied mult is zero, it means we just parsed a number, not a duration. Throw:
-		throw Error::INVALID_VALUE;
-
-	if (qtyStr.length() > 0) // we have remaining value, add it using the implied multiplier:
-		_qty += atoi(qtyStr.c_str()) * implied_mult;
-}
-
-Duration::Duration(int seconds) : _qty(seconds) {}
+Duration::Duration(int seconds) 
+	: _qty(seconds) {}
 
 /* From: typeCalc::Value */
 double Duration::qty() const {
 	return _qty;
 }
 
-std::unique_ptr<Value> Duration::eval(const Operator op) const {
-	throw Error::OPER_NOT_IMPL;
-}
-
-std::unique_ptr<Value> Duration::eval(const Operator op, const Number* const val2) const {
-	switch (op) {
-	case Operator::MULT:
-		return std::unique_ptr<Duration>(new Duration(_qty * val2->qty()));
-	case Operator::DIV:
-		return std::unique_ptr<Duration>(new Duration(_qty / val2->qty()));
-	default:
-		throw Error::OPER_NOT_IMPL;
-	}
-}
-
-std::unique_ptr<Value> Duration::eval(const Operator op, const Duration* const val2) const {
-	switch (op) {
-	case Operator::PLUS:
-		return std::unique_ptr<Duration>(new Duration(_qty + val2->qty()));
-	case Operator::MINUS:
-		return std::unique_ptr<Duration>(new Duration(_qty - val2->qty()));
-	default:
-		throw Error::OPER_NOT_IMPL;
-	}
-}
-
 bool Duration::operator==(const Value& val) const {
+	const Duration* num = dynamic_cast<const Duration*>(&val);
 	// This class is only equal if val is a Duration:
-	try {
-		const Duration* num = dynamic_cast<const Duration*>(&val);
+	if (num != nullptr)
 		return (qty() == num->qty());
+	// If we get something different than Duration, then different.
+	return false;
+}
+
+void Duration::add(const Value& operand) {
+	const Duration* duration = dynamic_cast<const Duration*>(&operand);
+	if (duration == nullptr) {
+		// We do not have a duration; throw invalid operation error:
+		throw std::exception(("Cannot add " + operand.typeName() + " to " + typeName() + ".").c_str());
 	}
-	catch (...) {
-		// If we get something different than Duration, then different.
-		return false;
+	else {
+		_qty += duration->qty();
+	}
+}
+
+void Duration::sub(const Value& operand) {
+	const Duration* duration = dynamic_cast<const Duration*>(&operand);
+	if (duration == nullptr) {
+		// We do not have a duration; throw invalid operation error:
+		throw std::exception(("Cannot subtract " + operand.typeName() + " from " + typeName() + ".").c_str());
+	}
+	else {
+		_qty -= duration->qty();
+	}
+}
+
+void Duration::mult(const Value& operand) {
+	const Number* number = dynamic_cast<const Number*>(&operand);
+	if (number == nullptr) {
+		// We do not have a duration; throw invalid operation error:
+		throw std::exception(("Cannot multiply " + typeName() + " with " + operand.typeName() + ".").c_str());
+	}
+	else {
+		_qty *= number->qty();
+	}
+}
+
+void Duration::div(const Value& operand) {
+	const Number* number = dynamic_cast<const Number*>(&operand);
+	if (number == nullptr) {
+		// We do not have a duration; throw invalid operation error:
+		throw std::exception(("Cannot divide " + typeName() + " with " + operand.typeName() + ".").c_str());
+	}
+	else {
+		_qty /= number->qty();
 	}
 }

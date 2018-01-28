@@ -3,7 +3,6 @@
 using namespace typeCalc;
 int main(int, char*[])
 {
-	Evaluator e;
-	std::unique_ptr<Value> v1 = e.evaluate("1h30 + 1h30");
+	std::unique_ptr<Value> v1 = Evaluator::evaluate("-5 + 5");
 	return 0;
 }
