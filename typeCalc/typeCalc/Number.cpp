@@ -55,3 +55,11 @@ std::unique_ptr<Value> Number::div(const Value& operand) const {
 	else
 		return std::unique_ptr<Value>(new Number(_qty / number->qty()));
 }
+
+std::string Number::asString() const {
+	return std::move(std::to_string(_qty));
+}
+
+std::string Number::typeName() const {
+	return std::string("Number");
+}

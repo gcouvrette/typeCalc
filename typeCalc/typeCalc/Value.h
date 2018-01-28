@@ -15,5 +15,8 @@ namespace typeCalc {
 		virtual std::unique_ptr<Value> sub(const Value& operand) const = 0;
 		virtual std::unique_ptr<Value> mult(const Value& operand) const = 0;
 		virtual std::unique_ptr<Value> div(const Value& operand) const = 0;
+
+		// Function to format the value (used to output result)
+		virtual std::string asString() const = 0;
 	};
 }

@@ -73,3 +73,26 @@ std::unique_ptr<Value> Duration::div(const Value& operand) const {
 		return std::unique_ptr<Value>(new Duration(_qty / number->qty()));
 	}
 }
+
+std::string Duration::asString() const {
+	std::string result;
+	int absoluteQty = (_qty < 0 ? -1 * _qty : _qty);
+	int hours = absoluteQty / 3600;
+	int mins = (absoluteQty - ((int)hours * 3600)) / 60;
+	int secs = (absoluteQty - ((int)hours * 3600) - ((int)mins * 60));
+
+	if (_qty < 0)
+		result += "-";
+	if (hours > 0)
+		result += std::to_string(hours) + "h";
+	if (mins > 0)
+		result += std::to_string(mins) + "m";
+	if (secs > 0 || absoluteQty < 60)
+		result += std::to_string(secs) + "s";
+
+	return std::move(result);
+}
+
+std::string Duration::typeName() const {
+	return std::string("Duration");
+}

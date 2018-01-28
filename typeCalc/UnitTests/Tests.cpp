@@ -92,5 +92,16 @@ namespace UnitTests
 			Assert::IsTrue(*Evaluator::evaluate("-5h22 + -6h11") == Duration(11, 33, 00, true), L"evaluate did not return expected value.", LINE_INFO());
 			Assert::IsTrue(*Evaluator::evaluate("-5h22 + 6h11") == Duration(0, 49, 00), L"evaluate did not return expected value.", LINE_INFO());
 		}
+
+		TEST_METHOD(ValueFormatting)
+		{
+			Assert::IsTrue(Duration(1,30,00).asString().compare("1h30m"), L"Format did not return expected string.", LINE_INFO());
+			Assert::IsTrue(Duration(1, 30, 00, true).asString().compare("-1h30m"), L"Format did not return expected string.", LINE_INFO());
+			Assert::IsTrue(Number(10).asString().compare("10"), L"Format did not return expected string.", LINE_INFO());
+			Assert::IsTrue(Number(-8).asString().compare("-8"), L"Format did not return expected string.", LINE_INFO());
+			Assert::IsTrue(Number(0).asString().compare("0"), L"Format did not return expected string.", LINE_INFO());
+			Assert::IsTrue(Duration(0).asString().compare("0s"), L"Format did not return expected string.", LINE_INFO());
+			Assert::IsTrue(Number(0.255).asString().compare("0.255"), L"Format did not return expected string.", LINE_INFO());
+		}
 	};
 }
