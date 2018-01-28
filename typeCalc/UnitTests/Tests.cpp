@@ -68,19 +68,29 @@ namespace UnitTests
 		// Simple typed calculation(duration + duration)
 		TEST_METHOD(DurationTypeTest)
 		{
-			Assert::IsTrue(*Evaluator::evaluate("1h30 + 1h30") == Duration(10800), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*Evaluator::evaluate("1h30 + 1h30m00") == Duration(3, 00, 00), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*Evaluator::evaluate("1h30 + 1h30m00s") == Duration(3, 00, 00), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*Evaluator::evaluate("1h30m + 1h + 30m") == Duration(3, 00, 00), L"evaluate did not return expected value.", LINE_INFO());
 		}
 
 		// Simple typed calculation(duration * number)
 		TEST_METHOD(DurationTimesNumber)
 		{
-			Assert::IsTrue(*Evaluator::evaluate("1h30 * 2") == Duration(10800), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*Evaluator::evaluate("1h30 * 2") == Duration(3, 00, 00), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*Evaluator::evaluate("1.5 * 1h30") == Duration(2, 15, 00), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*Evaluator::evaluate("(1h30 * 3 + 2h01) / 2") == Duration(3, 15, 30), L"evaluate did not return expected value.", LINE_INFO());
 		}
 
-		// Negative number
 		TEST_METHOD(NegativeNumber)
 		{
 			Assert::IsTrue(*Evaluator::evaluate("-5 + 6") == Number(1), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*Evaluator::evaluate("-5 + -6") == Number(-11), L"evaluate did not return expected value.", LINE_INFO());
+		}
+
+		TEST_METHOD(NegativeDuration)
+		{
+			Assert::IsTrue(*Evaluator::evaluate("-5h22 + -6h11") == Duration(11, 33, 00, true), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*Evaluator::evaluate("-5h22 + 6h11") == Duration(0, 49, 00), L"evaluate did not return expected value.", LINE_INFO());
 		}
 	};
 }

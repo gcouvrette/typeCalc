@@ -1,5 +1,6 @@
 #include "Value.h"
 #include "Number.h"
+#include "Duration.h"
 
 using namespace typeCalc;
 
@@ -18,34 +19,39 @@ bool Number::operator==(const Value& val) const {
 	return false; 
 }
 
-void Number::add(const Value& operand) {
+std::unique_ptr<Value> Number::add(const Value& operand) const {
 	const Number* number = dynamic_cast<const Number*>(&operand);
 	if (number == nullptr)
 		throw std::exception(("Cannot add a " + operand.typeName() + " to a " + typeName() + ".").c_str());
 	else
-		_qty += number->qty();
+		return std::unique_ptr<Value>(new Number(_qty + number->qty()));
 }
 
-void Number::sub(const Value& operand) {
+std::unique_ptr<Value> Number::sub(const Value& operand) const {
 	const Number* number = dynamic_cast<const Number*>(&operand);
 	if (number == nullptr)
 		throw std::exception(("Cannot subtract a " + operand.typeName() + " from a " + typeName() + ".").c_str());
 	else
-		_qty -= number->qty();
+		return std::unique_ptr<Value>(new Number(_qty - number->qty()));
 }
 
-void Number::mult(const Value& operand) {
+std::unique_ptr<Value> Number::mult(const Value& operand) const {
+	// Number mult with number:
 	const Number* number = dynamic_cast<const Number*>(&operand);
-	if (number == nullptr)
-		throw std::exception(("Cannot multiply a " + typeName() + " by a " + operand.typeName() + ".").c_str());
-	else
-		_qty *= number->qty();
+	if (number != nullptr) {
+		return std::unique_ptr<Value>(new Number(_qty * number->qty()));
+	}
+	const Duration* duration = dynamic_cast<const Duration*>(&operand);
+	if (duration != nullptr) {
+		return std::unique_ptr<Value>(new Duration((int)(_qty * duration->qty())));
+	}
+	throw std::exception(("Cannot multiply a " + typeName() + " by a " + operand.typeName() + ".").c_str());
 }
 
-void Number::div(const Value& operand) {
+std::unique_ptr<Value> Number::div(const Value& operand) const {
 	const Number* number = dynamic_cast<const Number*>(&operand);
 	if (number == nullptr)
 		throw std::exception(("Cannot divide a " + typeName() + " by a " + operand.typeName() + ".").c_str());
 	else
-		_qty /= number->qty();
+		return std::unique_ptr<Value>(new Number(_qty / number->qty()));
 }

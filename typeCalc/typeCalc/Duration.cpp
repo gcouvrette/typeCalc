@@ -4,8 +4,17 @@
 
 using namespace typeCalc;
 
-Duration::Duration(int seconds) 
-	: _qty(seconds) {}
+Duration::Duration(int seconds): _qty(seconds) {
+}
+
+Duration::Duration(unsigned int hours /* = 0 */, unsigned int minutes /* = 0 */, unsigned int seconds /* = 0 */, bool isNeg /* = false */) {
+	_qty = 0;
+	_qty += 3600 * hours;
+	_qty += 60 * minutes;
+	_qty += seconds;
+	if (isNeg)
+		_qty *= (-1);
+}
 
 /* From: typeCalc::Value */
 double Duration::qty() const {
@@ -21,46 +30,46 @@ bool Duration::operator==(const Value& val) const {
 	return false;
 }
 
-void Duration::add(const Value& operand) {
+std::unique_ptr<Value> Duration::add(const Value& operand) const {
 	const Duration* duration = dynamic_cast<const Duration*>(&operand);
 	if (duration == nullptr) {
 		// We do not have a duration; throw invalid operation error:
 		throw std::exception(("Cannot add " + operand.typeName() + " to " + typeName() + ".").c_str());
 	}
 	else {
-		_qty += duration->qty();
+		return std::unique_ptr<Value>(new Duration(_qty + duration->qty()));
 	}
 }
 
-void Duration::sub(const Value& operand) {
+std::unique_ptr<Value> Duration::sub(const Value& operand) const {
 	const Duration* duration = dynamic_cast<const Duration*>(&operand);
 	if (duration == nullptr) {
 		// We do not have a duration; throw invalid operation error:
 		throw std::exception(("Cannot subtract " + operand.typeName() + " from " + typeName() + ".").c_str());
 	}
 	else {
-		_qty -= duration->qty();
+		return std::unique_ptr<Value>(new Duration(_qty - duration->qty()));
 	}
 }
 
-void Duration::mult(const Value& operand) {
+std::unique_ptr<Value> Duration::mult(const Value& operand) const {
 	const Number* number = dynamic_cast<const Number*>(&operand);
 	if (number == nullptr) {
 		// We do not have a duration; throw invalid operation error:
 		throw std::exception(("Cannot multiply " + typeName() + " with " + operand.typeName() + ".").c_str());
 	}
 	else {
-		_qty *= number->qty();
+		return std::unique_ptr<Value>(new Duration(_qty * number->qty()));
 	}
 }
 
-void Duration::div(const Value& operand) {
+std::unique_ptr<Value> Duration::div(const Value& operand) const {
 	const Number* number = dynamic_cast<const Number*>(&operand);
 	if (number == nullptr) {
 		// We do not have a duration; throw invalid operation error:
 		throw std::exception(("Cannot divide " + typeName() + " with " + operand.typeName() + ".").c_str());
 	}
 	else {
-		_qty /= number->qty();
+		return std::unique_ptr<Value>(new Duration(_qty / number->qty()));
 	}
 }

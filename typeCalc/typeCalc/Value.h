@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <memory>
 
 namespace typeCalc {
 	class Value {
@@ -10,9 +11,9 @@ namespace typeCalc {
 		virtual bool operator==(const Value& val) const = 0;
 
 		// These methods applies an operation to the this value, using the value specified in parameters.
-		virtual void add(const Value& operand) = 0;
-		virtual void sub(const Value& operand) = 0;
-		virtual void mult(const Value& operand) = 0;
-		virtual void div(const Value& operand) = 0;
+		virtual std::unique_ptr<Value> add(const Value& operand) const = 0;
+		virtual std::unique_ptr<Value> sub(const Value& operand) const = 0;
+		virtual std::unique_ptr<Value> mult(const Value& operand) const = 0;
+		virtual std::unique_ptr<Value> div(const Value& operand) const = 0;
 	};
 }

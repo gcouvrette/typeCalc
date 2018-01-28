@@ -151,7 +151,7 @@ void Evaluator::completeValue(std::string& valueStr, std::vector<Token>& tokens)
 		}
 		if (!number.empty())
 			seconds += (stoi(number) * nextUnitFactor);
-		tokens.emplace_back(std::unique_ptr<Value>(new Duration(seconds)));
+		tokens.emplace_back(std::unique_ptr<Value>(new Duration(0, 0, seconds, (valueStr[0] == '-') /* Is Negative? */)));
 	}
 	// Unknown value, thow error message.
 	else {
@@ -186,25 +186,25 @@ bool typeCalc::Evaluator::pop(std::stack<std::unique_ptr<Value>>& values, std::s
 	values.pop();
 	if (values.empty())
 		throw std::exception("Missing value for operation.");
-	std::unique_ptr<Value> val1 = std::move(values.top());
+	std::unique_ptr<Value> val = std::move(values.top());
 	values.pop();
 	// Process them
 	switch (op) {
 	case Operator::PLUS:
-		val1->add(*val2.get());
+		val = val->add(*val2.get());
 		break;
 	case Operator::MINUS:
-		val1->sub(*val2.get());
+		val = val->sub(*val2.get());
 		break;
 	case Operator::MULT:
-		val1->mult(*val2.get());
+		val = val->mult(*val2.get());
 		break;
 	case Operator::DIV:
-		val1->div(*val2.get());
+		val = val->div(*val2.get());
 		break;
 	}
 	// Push it back on the stack for the next pop:
-	values.push(std::move(val1));
+	values.push(std::move(val));
 	return true;
 }
 
