@@ -107,7 +107,13 @@ std::vector<Evaluator::Token> Evaluator::tokenize(const std::string& formula) {
 				completeValue(valueStr, tokens);
 				tokens.emplace_back(Operator::MINUS);
 				break;
-			} // else, consider as part of the value (default case)
+			}
+			else if (tokens.size() > 0 &&
+				     !tokens.back().isValue &&
+				     tokens.back().asOperator == Operator::CLOSING_P) { // Also, after a closing parentheses, we have to consider it as an operator as well:
+				tokens.emplace_back(Operator::MINUS);
+				break;
+			}// else, consider as part of the value (default case)
 		default:
 			valueStr += c;
 		}

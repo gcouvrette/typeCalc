@@ -64,6 +64,9 @@ std::unique_ptr<Value> Duration::mult(const Value& operand) const {
 }
 
 std::unique_ptr<Value> Duration::div(const Value& operand) const {
+	// Do not allow division by zero for any data type
+	if (operand.isZero())
+		throw std::exception(("Cannot divide " + typeName() + " (" + asString() + ") by zero.").c_str());
 	// Duration division can be with a number (ex: 8h00 / 2 == 4h00),
 	// Or it can be divided by a duration to get a number, ex: 8h00 / 0h30 == 16)
 
@@ -80,6 +83,7 @@ std::unique_ptr<Value> Duration::div(const Value& operand) const {
 	// We do not have a valid data type; throw invalid operation error:
 	throw std::exception(("Cannot divide " + typeName() + " with " + operand.typeName() + ".").c_str());
 }
+
 
 std::string Duration::asString() const {
 	std::string result;
@@ -102,4 +106,8 @@ std::string Duration::asString() const {
 
 std::string Duration::typeName() const {
 	return std::string("Duration");
+}
+
+bool Duration::isZero() const {
+	return (_qty == 0);
 }

@@ -47,6 +47,7 @@ namespace UnitTests
 		TEST_METHOD(NestedParenthesesTest)
 		{
 			Assert::IsTrue(*Evaluator::evaluate("(5+(2*(3+3))+6)/2") == Number(11.5), L"evaluate did not return expected value.", LINE_INFO());
+			Assert::IsTrue(*Evaluator::evaluate("8h00 / ((8h00/4)-1h00)") == Number(8.0), L"evaluate did not return expected value.", LINE_INFO());
 		}
 
 		// Managing whitespaces
@@ -111,6 +112,14 @@ namespace UnitTests
 			Assert::IsTrue(*Evaluator::evaluate("8h00/4h00") == Number(2.0));
 			Assert::IsTrue(*Evaluator::evaluate("4h00/8h00") == Number(0.5));
 			Assert::IsTrue(*Evaluator::evaluate("1h00/0h10") == Number(6.0));
+		}
+
+		TEST_METHOD(DivisionByZero)
+		{
+			Assert::ExpectException<std::exception>([] { Evaluator::evaluate("1/0"); });
+			Assert::ExpectException<std::exception>([] { Evaluator::evaluate("1h00/0"); });
+			Assert::ExpectException<std::exception>([] { Evaluator::evaluate("1h00/0h00"); });
+			Assert::ExpectException<std::exception>([] { Evaluator::evaluate("8h00 / ((8/4)-2)"); });
 		}
 	};
 }

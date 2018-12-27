@@ -18,5 +18,8 @@ namespace typeCalc {
 
 		// Function to format the value (used to output result)
 		virtual std::string asString() const = 0;
+
+		// This method evaluates if the value is considered as "zero" for that data type
+		virtual bool isZero() const = 0;
 	};
 }

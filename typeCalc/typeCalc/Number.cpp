@@ -53,7 +53,11 @@ std::unique_ptr<Value> Number::div(const Value& operand) const {
 	if (number == nullptr)
 		throw std::exception(("Cannot divide a " + typeName() + " by a " + operand.typeName() + ".").c_str());
 	else
+	{
+		if (number->isZero())
+			throw std::exception(("Cannot divide " + typeName() + " (" + asString() + ") by zero.").c_str());
 		return std::unique_ptr<Value>(new Number(_qty / number->qty()));
+	}
 }
 
 std::string Number::asString() const {
@@ -62,4 +66,8 @@ std::string Number::asString() const {
 
 std::string Number::typeName() const {
 	return std::string("Number");
+}
+
+bool Number::isZero() const {
+	return (_qty == 0);
 }

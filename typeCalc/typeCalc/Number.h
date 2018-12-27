@@ -17,6 +17,8 @@ namespace typeCalc {
 		virtual std::unique_ptr<Value> div(const Value& operand) const override;
 
 		virtual std::string asString() const override;
+
+		virtual bool isZero() const override;
 	private:
 		double _qty;
 	};
