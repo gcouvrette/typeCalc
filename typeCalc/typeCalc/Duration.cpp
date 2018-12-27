@@ -22,10 +22,10 @@ double Duration::qty() const {
 }
 
 bool Duration::operator==(const Value& val) const {
-	const Duration* num = dynamic_cast<const Duration*>(&val);
+	const Duration* duration = dynamic_cast<const Duration*>(&val);
 	// This class is only equal if val is a Duration:
-	if (num != nullptr)
-		return (qty() == num->qty());
+	if (duration != nullptr)
+		return (qty() == duration->qty());
 	// If we get something different than Duration, then different.
 	return false;
 }
@@ -55,7 +55,7 @@ std::unique_ptr<Value> Duration::sub(const Value& operand) const {
 std::unique_ptr<Value> Duration::mult(const Value& operand) const {
 	const Number* number = dynamic_cast<const Number*>(&operand);
 	if (number == nullptr) {
-		// We do not have a duration; throw invalid operation error:
+		// We do not have a number; throw invalid operation error:
 		throw std::exception(("Cannot multiply " + typeName() + " with " + operand.typeName() + ".").c_str());
 	}
 	else {
@@ -64,14 +64,21 @@ std::unique_ptr<Value> Duration::mult(const Value& operand) const {
 }
 
 std::unique_ptr<Value> Duration::div(const Value& operand) const {
+	// Duration division can be with a number (ex: 8h00 / 2 == 4h00),
+	// Or it can be divided by a duration to get a number, ex: 8h00 / 0h30 == 16)
+
+	// First, test with a number division: 
 	const Number* number = dynamic_cast<const Number*>(&operand);
-	if (number == nullptr) {
-		// We do not have a duration; throw invalid operation error:
-		throw std::exception(("Cannot divide " + typeName() + " with " + operand.typeName() + ".").c_str());
-	}
-	else {
+	if (number != nullptr) {
 		return std::unique_ptr<Value>(new Duration(_qty / number->qty()));
 	}
+	// Then, try with a duration:
+	const Duration* duration = dynamic_cast<const Duration*>(&operand);
+	if (duration != nullptr) {
+		return std::unique_ptr<Value>(new Number(_qty / duration->qty()));
+	}
+	// We do not have a valid data type; throw invalid operation error:
+	throw std::exception(("Cannot divide " + typeName() + " with " + operand.typeName() + ".").c_str());
 }
 
 std::string Duration::asString() const {

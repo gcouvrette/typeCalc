@@ -95,13 +95,22 @@ namespace UnitTests
 
 		TEST_METHOD(ValueFormatting)
 		{
-			Assert::IsTrue(Duration(1,30,00).asString().compare("1h30m"), L"Format did not return expected string.", LINE_INFO());
-			Assert::IsTrue(Duration(1, 30, 00, true).asString().compare("-1h30m"), L"Format did not return expected string.", LINE_INFO());
+			Assert::IsTrue(Duration(1,30,00).asString().compare("1h30"), L"Format did not return expected string.", LINE_INFO());
+			Assert::IsTrue(Duration(1, 30, 00, true).asString().compare("-1h30"), L"Format did not return expected string.", LINE_INFO());
 			Assert::IsTrue(Number(10).asString().compare("10"), L"Format did not return expected string.", LINE_INFO());
 			Assert::IsTrue(Number(-8).asString().compare("-8"), L"Format did not return expected string.", LINE_INFO());
 			Assert::IsTrue(Number(0).asString().compare("0"), L"Format did not return expected string.", LINE_INFO());
-			Assert::IsTrue(Duration(0).asString().compare("0s"), L"Format did not return expected string.", LINE_INFO());
+			Assert::IsTrue(Duration(0).asString().compare("0"), L"Format did not return expected string.", LINE_INFO());
 			Assert::IsTrue(Number(0.255).asString().compare("0.255"), L"Format did not return expected string.", LINE_INFO());
+		}
+
+		TEST_METHOD(DurationDivision)
+		{
+			Assert::IsTrue(*Evaluator::evaluate("8h00/-8h00") == Number(-1.0));
+			Assert::IsTrue(*Evaluator::evaluate("8h00/8h00") == Number(1.0));
+			Assert::IsTrue(*Evaluator::evaluate("8h00/4h00") == Number(2.0));
+			Assert::IsTrue(*Evaluator::evaluate("4h00/8h00") == Number(0.5));
+			Assert::IsTrue(*Evaluator::evaluate("1h00/0h10") == Number(6.0));
 		}
 	};
 }
